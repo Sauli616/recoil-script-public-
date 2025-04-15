@@ -1,41 +1,52 @@
-# Compiled Lua sources
-luac.out
+EnablePrimaryMouseButtonEvents(true)
 
-# luarocks build files
-*.src.rock
-*.zip
-*.tar.gz
+local fire_key = 1
+local secondary_key = 3
+local current = "AK"
 
-# Object files
-*.o
-*.os
-*.ko
-*.obj
-*.elf
+local weapons = {
+  AK = {v=8, h=2, d=90, b=false, c=0},
+  M4 = {v=6, h=1, d=85, b=true,  c=3},
+  MP5 = {v=5, h=0, d=70, b=false, c=0},
+  Desert_Eagle = {v=5, h=1, d=100, b=false, c=0}
+}
 
-# Precompiled Headers
-*.gch
-*.pch
+function switch(weapon)
+  if weapons[weapon] then current = weapon end
+end
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-*.def
-*.exp
+function fire()
+  local w = weapons[current]
+  if not w then return end
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+  if w.b then
+    for i=1, w.c do
+      if not IsMouseButtonPressed(fire_key) then break end
+      MoveMouseRelative(w.h, w.v)
+      Sleep(w.d)
+    end
+  else
+    repeat
+      MoveMouseRelative(w.h, w.v)
+      Sleep(w.d)
+    until not IsMouseButtonPressed(fire_key)
+  end
+end
 
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+function OnEvent(event, arg)
+  -- ASEENVAIHTO
+  if event == "G_PRESSED" then
+    if arg == 1 then switch("AK")
+    elseif arg == 2 then switch("M4")
+    elseif arg == 3 then switch("MP5")
+    elseif arg == 4 then switch("Desert_Eagle")
+    end
+  end
 
+  -- TULITUS LOOP
+  if IsKeyLockOn("scrolllock") then
+    if (secondary_key == 0 or IsMouseButtonPressed(secondary_key)) and IsMouseButtonPressed(fire_key) then
+      fire()
+    end
+  end
+end
