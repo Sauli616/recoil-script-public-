@@ -1,8 +1,16 @@
 EnablePrimaryMouseButtonEvents(true)
 
-local fire_key = 1
-local secondary_key = 3
-local current = "AK"
+-- ==========================
+-- KÄYTTÄJÄN ASETUKSET
+-- ==========================
+
+local fire_key = 1               -- Hiiren vasen nappi
+local secondary_key = 3          -- Keskihiiri (tai 0 = ei vaadi)
+local current = "AK"             -- Alkuasetuksena ase kun skripti käynnistyy
+
+-- ==========================
+-- ASEPROFIILIT
+-- ==========================
 
 local weapons = {
   AK = {v=8, h=2, d=9, b=false, c=0},
@@ -11,8 +19,16 @@ local weapons = {
   Desert_Eagle = {v=5, h=1, d=100, b=false, c=0}
 }
 
-function switch(weapon)
-  if weapons[weapon] then current = weapon end
+-- ==========================
+-- LOGIIKKA
+-- ==========================
+
+function updateWeaponFromNumLock()
+  if IsKeyLockOn("numlock") then
+    current = "AK"
+  else
+    current = "M4"
+  end
 end
 
 function fire()
@@ -20,7 +36,7 @@ function fire()
   if not w then return end
 
   if w.b then
-    for i=1, w.c do
+    for i = 1, w.c do
       if not IsMouseButtonPressed(fire_key) then break end
       MoveMouseRelative(w.h, w.v)
       Sleep(w.d)
@@ -34,16 +50,8 @@ function fire()
 end
 
 function OnEvent(event, arg)
-  -- ASEENVAIHTO
-  if event == "G_PRESSED" then
-    if arg == 1 then switch("AK")
-    elseif arg == 2 then switch("M4")
-    elseif arg == 3 then switch("MP5")
-    elseif arg == 4 then switch("Desert_Eagle")
-    end
-  end
+  updateWeaponFromNumLock()
 
-  -- TULITUS LOOP
   if IsKeyLockOn("scrolllock") then
     if (secondary_key == 0 or IsMouseButtonPressed(secondary_key)) and IsMouseButtonPressed(fire_key) then
       fire()
