@@ -1,26 +1,39 @@
-EnablePrimaryMouseButtonEvents(true)
+EnablePrimaryMouseButtonEvents(true)-- true = script toimii
 
 -- ==========================
 -- KÄYTTÄJÄN ASETUKSET
 -- ==========================
-
 local fire_key = 1               -- Hiiren vasen nappi
 local secondary_key = 3          -- Keskihiiri (tai 0 = ei vaadi)
-local current = "AK"             -- Alkuasetuksena ase kun skripti käynnistyy
+local current = "AK"             -- Weapon profiili
 
 -- ==========================
 -- ASEPROFIILIT
 -- ==========================
-
 local weapons = {
-  AK = {v=8, h=2, d=9, b=false, c=0},
-  M4 = {v=6, h=1, d=8, b=true,  c=3},
-  MP5 = {v=5, h=0, d=7, b=false, c=0},
-  Desert_Eagle = {v=5, h=1, d=100, b=false, c=0}
+  AK = {v = 8, h = 2, d = 9, b = false, c = 0},  -- V = vertigal
+  M4 = {v = 6, h = 1, d = 8, b = true, c = 3},   -- H = Horisontal
+  MP5 = {v = 5, h = 0, d = 7, b = false, c = 0},  -- D = Delay
+  Desert_Eagle = {v = 5, h = 1, d = 100, b = false, c = 0}  -- B = Burst C = Burst count
 }
 
 -- ==========================
--- LOGIIKKA
+-- ÄLÄ KOSKE
 -- ==========================
-
-function OnEvent(e,a)current=IsKeyLockOn("numlock")and"AK"or"M4"if IsKeyLockOn("scrolllock")and(secondary_key==0 or IsMouseButtonPressed(secondary_key))and IsMouseButtonPressed(fire_key)then local w=weapons[current]i=0 repeat if w.b and i>=w.c then break end MoveMouseRelative(w.h,w.v)Sleep(w.d)i=i+1 until not IsMouseButtonPressed(fire_key)end end
+function OnEvent(e, a)
+-- Asetetaan ase sen mukaan, onko NumLock päällä vai ei
+current = IsKeyLockOn("numlock") and "AK" or "M4"
+  
+-- chekk, onko ScrollLock päällä ja onko toinen hiiren nappi (jos määritetty)
+if IsKeyLockOn("scrolllock") and (secondary_key == 0 or IsMouseButtonPressed(secondary_key)) and IsMouseButtonPressed(fire_key) then
+local w = weapons[current]
+local i = 0
+-- looppaa nii kauvan kuin vasen nappi goonattuna
+repeat
+if w.b and i >= w.c then break end
+MoveMouseRelative(w.h, w.v)
+Sleep(w.d)
+i = i + 1
+until not IsMouseButtonPressed(fire_key)
+end
+end
