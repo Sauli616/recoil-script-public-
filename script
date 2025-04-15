@@ -1,0 +1,52 @@
+EnablePrimaryMouseButtonEvents(true)
+
+local fire_key = 1
+local secondary_key = 3
+local current = "AK"
+
+local weapons = {
+  AK = {v=8, h=2, d=90, b=false, c=0},
+  M4 = {v=6, h=1, d=85, b=true,  c=3},
+  MP5 = {v=5, h=0, d=70, b=false, c=0},
+  Desert_Eagle = {v=5, h=1, d=100, b=false, c=0}
+}
+
+function switch(weapon)
+  if weapons[weapon] then current = weapon end
+end
+
+function fire()
+  local w = weapons[current]
+  if not w then return end
+
+  if w.b then
+    for i=1, w.c do
+      if not IsMouseButtonPressed(fire_key) then break end
+      MoveMouseRelative(w.h, w.v)
+      Sleep(w.d)
+    end
+  else
+    repeat
+      MoveMouseRelative(w.h, w.v)
+      Sleep(w.d)
+    until not IsMouseButtonPressed(fire_key)
+  end
+end
+
+function OnEvent(event, arg)
+  -- ASEENVAIHTO
+  if event == "G_PRESSED" then
+    if arg == 1 then switch("AK")
+    elseif arg == 2 then switch("M4")
+    elseif arg == 3 then switch("MP5")
+    elseif arg == 4 then switch("Desert_Eagle")
+    end
+  end
+
+  -- TULITUS LOOP
+  if IsKeyLockOn("scrolllock") then
+    if (secondary_key == 0 or IsMouseButtonPressed(secondary_key)) and IsMouseButtonPressed(fire_key) then
+      fire()
+    end
+  end
+end
