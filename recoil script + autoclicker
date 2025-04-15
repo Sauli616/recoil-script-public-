@@ -13,9 +13,9 @@ local auto_clicking = false     -- Automaattisen klikkauksen tila
 -- ASEPROFIILIT
 -- ===========================
 local weapons = {
-  ar = {v = 6, h = 0, d = 9, b = false, c = 0},  -- V = vertikaali,
+  ar = {v = 4, h = 0, d = 9, b = false, c = 0},  -- V = vertikaali,
   dmr = {v = 8, h = 1, d = 9, b = true, c = 3}, -- H = horisontaalinen,
-  smg12 = {v = 8, h = 1, d = 9, b = false, c = 0}, -- D = viive,
+  smg12 = {v = 7, h = 1, d = 9, b = false, c = 0}, -- D = viive,
   Desert_Eagle = {v = 5, h = 1, d = 100, b = false, c = 0} -- B = Burst, C = Burst count
 }
 
