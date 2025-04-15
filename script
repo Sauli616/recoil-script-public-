@@ -24,16 +24,17 @@ function OnEvent(e, a)
 -- Asetetaan ase sen mukaan, onko NumLock päällä vai ei
 current = IsKeyLockOn("numlock") and "AK" or "M4"
   
--- chekk, onko ScrollLock päällä ja onko toinen hiiren nappi (jos määritetty)
-if IsKeyLockOn("scrolllock") and (secondary_key == 0 or IsMouseButtonPressed(secondary_key)) and IsMouseButtonPressed(fire_key) then
+-- Tarkistetaan, että ScrollLock on päällä ja toinen hiiren nappi painettuna
+if IsKeyLockOn("scrolllock") then
+if (secondary_key == 0 or IsMouseButtonPressed(secondary_key)) and IsMouseButtonPressed(fire_key) then
 local w = weapons[current]
 local i = 0
--- looppaa nii kauvan kuin vasen nappi goonattuna
 repeat
 if w.b and i >= w.c then break end
 MoveMouseRelative(w.h, w.v)
 Sleep(w.d)
 i = i + 1
 until not IsMouseButtonPressed(fire_key)
+end
 end
 end
