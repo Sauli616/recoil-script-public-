@@ -1,71 +1,54 @@
-EnablePrimaryMouseButtonEvents(true)  -- true = script toimii
+EnablePrimaryMouseButtonEvents(true) -- true = skripti toimii
 
--- ==========================
+-- ===========================
 -- KÄYTTÄJÄN ASETUKSET
--- ==========================
+-- ===========================
 local fire_key = 1               -- Hiiren vasen nappi
-local secondary_key = 3          -- Keskihiiri (tai 0 = ei vaadi)
-local current = "AK"             -- Weapon profiili
+local secondary_key = 3          -- Keskihiiri (0 = ei vaadi)
+local current = "ar"             -- Aseprofiili
+local auto_click_speed = 25     -- 10 = 10ms
+local auto_clicking = false     -- Automaattisen klikkauksen tila
 
--- ==========================
+-- ===========================
 -- ASEPROFIILIT
--- ==========================
+-- ===========================
 local weapons = {
-  AK = {v = 8, h = 2, d = 9, b = false, c = 0},  -- V = vertigal
-  M4 = {v = 6, h = 1, d = 8, b = true, c = 3},   -- H = Horisontal
-  MP5 = {v = 5, h = 0, d = 7, b = false, c = 0},  -- D = Delay
-  Desert_Eagle = {v = 5, h = 1, d = 100, b = false, c = 0}  -- B = Burst C = Burst count
+  ar = {v = 6, h = 0, d = 9, b = false, c = 0},  -- V = vertikaali,
+  dmr = {v = 8, h = 1, d = 9, b = true, c = 3}, -- H = horisontaalinen,
+  smg12 = {v = 8, h = 1, d = 9, b = false, c = 0}, -- D = viive,
+  Desert_Eagle = {v = 5, h = 1, d = 100, b = false, c = 0} -- B = Burst, C = Burst count
 }
 
--- ==========================
+-- ===========================
 -- ÄLÄ KOSKE
--- ==========================
-local caps_lock_on = false  -- Muuttuja, joka seuraa Caps Lockin tilaa
-local auto_clicking = false -- Muuttuja, joka hallitsee automaattista klikkausta
-
+-- ===========================
 function OnEvent(e, a)
-  -- Tarkistetaan, onko Caps Lock päällä ja päivitetään tila
-  local current_caps_lock_state = IsKeyLockOn("capslock")
-  
-  -- Jos Caps Lock on päällä ja automaattinen klikkaus ei ole käynnissä
-  if current_caps_lock_state and not auto_clicking then
-    -- Jos hiiren vasen painike on painettuna, käynnistetään automaattinen klikkaus
-    if IsMouseButtonPressed(fire_key) then
-      auto_clicking = true
-      while auto_clicking and current_caps_lock_state do
-        PressMouseButton(fire_key)
-        Sleep(100)  -- Aseta haluamasi klikkauksen nopeus (100 ms = 10 klikkausta sekunnissa)
-        ReleaseMouseButton(fire_key)
-        Sleep(100)
-        
-        -- Päivitetään Caps Lockin tila joka silmukassa
-        current_caps_lock_state = IsKeyLockOn("capslock")
-        
-        -- Jos Caps Lock pois päältä, sammutetaan automaattinen klikkaus
-        if not current_caps_lock_state then
-          auto_clicking = false
+    -- Automaattinen klikkaus, jos CapsLock on päällä ja vasen hiiren nappi painettuna
+    if IsKeyLockOn("capslock") and IsMouseButtonPressed(fire_key) then
+        auto_clicking = true
+        while auto_clicking do
+            PressMouseButton(fire_key)
+            Sleep(auto_click_speed)
+            ReleaseMouseButton(fire_key)
+            Sleep(auto_click_speed)
+            if not IsKeyLockOn("capslock") then auto_clicking = false end
         end
-      end
+    else
+        auto_clicking = false
     end
-  else
-    -- Jos Caps Lock ei ole päällä, sammutetaan automaattinen klikkaus
-    auto_clicking = false
-  end
 
-  -- Asetetaan ase sen mukaan, onko NumLock päällä vai ei
-  current = IsKeyLockOn("numlock") and "AK" or "M4"
-  
-  -- Tarkistetaan, että ScrollLock on päällä ja toinen hiiren nappi painettuna
-  if IsKeyLockOn("scrolllock") then
-    if (secondary_key == 0 or IsMouseButtonPressed(secondary_key)) and IsMouseButtonPressed(fire_key) then
-      local w = weapons[current]
-      local i = 0
-      repeat
-        if w.b and i >= w.c then break end
-        MoveMouseRelative(w.h, w.v)
-        Sleep(w.d)
-        i = i + 1
-      until not IsMouseButtonPressed(fire_key)
+    -- Aseprofiili vaihdetaan sen mukaan, onko NumLock päällä
+    current = IsKeyLockOn("numlock") and "ar" or "smg12"
+
+    -- ScrollLock tarkistetaan ja liikutetaan hiirtä, jos toinen hiiren nappi painettuna
+    if IsKeyLockOn("scrolllock") and IsMouseButtonPressed(fire_key) and (secondary_key == 0 or IsMouseButtonPressed(secondary_key)) then
+        local w = weapons[current]
+        local i = 0
+        repeat
+            if w.b and i >= w.c then break end
+            MoveMouseRelative(w.h, w.v)  -- Liikuttaa hiirtä suhteellisesti
+            Sleep(w.d)  -- Aseta viive
+            i = i + 1
+        until not IsMouseButtonPressed(fire_key)  -- Toistetaan, kunnes vasen nappi vapautetaan
     end
-  end
 end
