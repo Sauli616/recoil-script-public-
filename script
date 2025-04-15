@@ -5,9 +5,9 @@ local secondary_key = 3
 local current = "AK"
 
 local weapons = {
-  AK = {v=8, h=2, d=90, b=false, c=0},
-  M4 = {v=6, h=1, d=85, b=true,  c=3},
-  MP5 = {v=5, h=0, d=70, b=false, c=0},
+  AK = {v=8, h=2, d=9, b=false, c=0},
+  M4 = {v=6, h=1, d=8, b=true,  c=3},
+  MP5 = {v=5, h=0, d=7, b=false, c=0},
   Desert_Eagle = {v=5, h=1, d=100, b=false, c=0}
 }
 
