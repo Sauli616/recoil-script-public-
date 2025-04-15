@@ -1,29 +1,30 @@
-EnablePrimaryMouseButtonEvents(true)  -- true = päälle, false = pois
+EnablePrimaryMouseButtonEvents(true)  -- true = on, false = off
 
 -- ===========================
--- ASETUKSET
+-- SETTINGS
 -- ===========================
 
-local fire_key         = 1      -- Hiiren vasen nappi (1)
-local secondary_key    = 3      -- Keskihiiri (3), 0 = ei vaadi toista painiketta
-local current          = "ar"   -- Käytössä oleva aseprofiili, esim. "ar" = assault rifle
-local auto_click_speed = 25     -- Klikkausnopeus millisekunteina (esim. 10 = 10ms)
+local fire_key         = 1      -- Left mouse button (1)
+local secondary_key    = 3      -- Middle mouse button (3), 0 = no secondary button required
+local current          = "ar"   -- Currently active weapon profile, e.g., "ar" = assault rifle
+local auto_click_speed = 25     -- Click speed in milliseconds (e.g., 10 = 10ms)
 
 -- ===========================
--- ASEPROFIILIT -- B = Burst C = Burst count 
--- D = viive H = horisontaalinen V = vertikaali
+-- WEAPON PROFILES -- B = Burst C = Burst count 
+-- D = delay H = horizontal V = vertical
 -- ===========================
 
 local weapons = {
   ar           = { v = 4, h = 0, d = 9,   b = false, c = 0 },
-  dmr          = { v = 8, h = 1, d = 9,   b = true,  c = 3 },
+  dmr          = { v = 4, h = 1, d = 9,   b = true,  c = 3 },
   smg12        = { v = 7, h = 1, d = 9,   b = false, c = 0 },
   mp5          = { v = 4, h = 0, d = 9,   b = false, c = 0 },
+  f2           = { v = 6, h = 0, d = 9,   b = false, c = 0 },
 }
 
 
 -- ===========================
--- ÄLÄ KOSKE ALLA OLEVIIN
+-- DO NOT MODIFY BELOW THIS LINE
 --===========================
 local auto_clicking    = false
 function OnEvent(e, a)
@@ -42,7 +43,7 @@ end
 --=======================================================
 --=======================================================
 
-    -- MÄÄRÄÄ minkä kahden välillä vaihtelee
+    -- SWITCH between two profiles
     current = IsKeyLockOn("numlock") and "ar" or "smg12"
 
 --=======================================================
