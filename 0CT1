@@ -35,18 +35,19 @@
 --]]
 
 -- Settings
-EnableRCS = true
-RequireToggle = true
+
 ToggleKey = "ScrollLock"
 
 -- Recoil Control Modes
 
-Easy = 3
-Hard = 7
+scope1x = 3
+scope2x = 7
 
 -------   DONT TOUCH   -------
+EnableRCS = true
+RequireToggle = true
 function GetRecoilStrength()
- return IsKeyLockOn("NumLock") and Easy or Hard
+ return IsKeyLockOn("NumLock") and scope1x or scope2x
 end
 function OnEvent(event, arg)
 if not EnableRCS or (RequireToggle and not IsKeyLockOn(ToggleKey)) then return end
