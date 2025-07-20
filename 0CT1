@@ -1,29 +1,70 @@
--- Perusasetukset
+--[[
+       .     .       .  .   . .   .   . .    +  .
+         .     .  :     .    .. :. .___---------___.
+              .  .   .    .  :.:. _".^ .^ ^.  '.. :"-_. .
+           .  :       .  .  .:../:            . .^  :.:\.
+               .   . :: +. :.:/: .   .    .        . . .:\
+        .  :    .     . _ :::/:               .  ^ .  . .:\
+         .. . .   . - : :.:./.                        .  .:\
+         .      .     . :..|:                    .  .  ^. .:|
+           .       . : : ..||        .                . . !:|
+         .     . . . ::. ::\(                           . :)/  
+        .   .     : . : .:.|. ######              .#######::|
+         :.. .  :-  : .:  ::|.#######           ..########:|
+        .  .  .  ..  .  .. :\ ########          :######## :/
+         .        .+ :: : -.:\ ########       . ########.:/
+           .  .+   . . . . :.:\. #######       #######..:/
+             :: . . . . ::.:..:.\           .   .   ..:/
+          .   .   .  .. :  -::::.\.       | |     . .:/
+             .  :  .  .  .-:.":.::.\             ..:/
+        .      -.   . . . .: .:::.:.\.           .:/
+       .   .   .  :      : ....::_:..:\   ___.  :/
+          .   .  .   .:. .. .  .: :.:.:\       :/  
+             +   .   .   : . ::. :.:. .:.|\  .:/|
+             .         +   .  .  ...:: ..|  --.:|
+       .      . . .   .  .  . ... :..:.."(  ..)"
+         .   .       .      :  .   .: ::/  .  .::\
+ ⚠️ DISCLAIMER ⚠️
+
+ This script is for EDUCATIONAL and TESTING purposes only.
+ Using scripts in online or competitive games may be 
+ against the Terms of Service.
+
+ I do NOT encourage cheating in any form.
+
+--]]
+
+-- Settings
 EnableRCS = true
-RecoilControlMode = "High"
-RcCustomStrength = 7
 RequireToggle = true
 ToggleKey = "ScrollLock"
 
--- Kahden eri 
-RecoilControlStrength_Low = 4
-RecoilControlStrength_High = 8
+-- Recoil Control Modes
+
+Easy = 3
+Hard = 7
 
 -------   DONT TOUCH   -------
-
 function GetRecoilStrength()
-return IsKeyLockOn("NumLock") and RecoilControlStrength_High or RecoilControlStrength_Low
+ return IsKeyLockOn("NumLock") and Easy or Hard
 end
 function OnEvent(event, arg)
- if not EnableRCS or (RequireToggle and not IsKeyLockOn(ToggleKey)) then return end
- if IsMouseButtonPressed(3) then
+if not EnableRCS or (RequireToggle and not IsKeyLockOn(ToggleKey)) then return end
+if IsMouseButtonPressed(3) then
 repeat
- if IsMouseButtonPressed(1) then
-repeat
-MoveMouseRelative(0, GetRecoilStrength())
-Sleep(math.random(7, 8))
- until not IsMouseButtonPressed(1)
+  if IsMouseButtonPressed(1) then
+    repeat
+     local xMove = math.random(-1, 1)
+      MoveMouseRelative(xMove, GetRecoilStrength())
+      Sleep(math.random(6, 10))
+    until not IsMouseButtonPressed(1)
+   end
+  until not IsMouseButtonPressed(3)
  end
- until not IsMouseButtonPressed(3)
 end
-end
+
+--[[
+ ➤ Created by: sauli616
+ ➤ Discord: https://discord.gg/XKxuKUZc4j
+ ➤ YouTube: https://www.youtube.com/@sauli616
+]]
