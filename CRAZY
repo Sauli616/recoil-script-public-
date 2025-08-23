@@ -1,0 +1,187 @@
+--[[ 
+       _______________
+      /               \
+     |  AIMTUX ONLINE  |
+      \_______________/
+           \   ^__^
+            \  (oo)\_______
+               (__)\       )\/\
+                   ||----w |
+                   ||     ||
+]]
+
+RecoilGun = "goy"  -- Kirjoita ase pienillä kirjaimilla
+
+-- Aseet joilla ei ole erikseen 1x ja 2x arvoja
+local SingleRecoilGuns = {
+  ["smg12"] = true,
+  ["smg122"] = true,
+  ["smg11"] = true,
+  ["t5"] = true,
+  ["wa"] = true,
+  ["pul"] = true,
+  ["vig"] = true,
+  ["sko"] = true,
+  ["pro"] = true,
+  ["mpx"] = true,
+  ["mae"] = true,
+  ["ela"] = true,
+  ["az"] = true,
+  ["kap"] = true,
+  ["jäg"] = true,
+}
+
+-- Recoil-arvot (täydennä halutessasi lisää)
+local RecoilTable = {
+  smg121x = 7.89, smg122x = 7.89,
+  smg111x = 4.615, smg112x = 4.615,
+  t51x = 3.81, t52x = 3.81,
+  wa1x = 4.65, wa2x = 4.65,
+  pul1x = 0.985, pul2x = 0.985,
+  vig1x = 6.5, vig2x = 6.5,
+  sko1x = 3.85, sko2x = 3.85,
+  pro1x = 3.6, pro2x = 3.6,
+  mpx1x = 2.495, mpx2x = 2.495,
+  mae1x = 5.12, mae2x = 5.12,
+  ela1x = 4.25, ela2x = 4.25,
+  az1x = 3.365, az2x = 3.365,
+  kap1x = 3.365, kap2x = 3.365,
+  ["jäg1x"] = 3.49, ["jäg2x"] = 3.49,
+
+  -- 2.5x scope mahdollisuus
+  ash1x = 4.22, ash2x = 7.665,
+  ace1x = 3.52, ace2x = 6.4,
+  ali1x = 2.86, ali2x = 5.2,
+  ama1x = 4.34, ama2x = 7.89,
+  ar31x = 3.46, ar32x = 6.2935,
+  arx1x = 3.19, arx2x = 5.8,
+  bb1x = 0.54, bb2x = 0.99,
+  bra1x = 3.80, bra2x = 6.9,
+  c81x = 3.74, c82x = 7.6,
+  cap1x = 3.80, cap2x = 6.9,
+  cas1x = 2.08, cas2x = 3.79,
+  com1x = 2.60, com2x = 4.725,
+  dei1x = 1.89, dei2x = 3.435,
+  dok1x = 1.84, dok2x = 3.35,
+  f21x = 5.28, f22x = 9.6,
+  fin1x = 4.12, fin2x = 7.49,
+  fuz1x = 3.52, fuz2x = 6.4,
+  gek1x = 2.95, gek2x = 5.365,
+  gla1x = 2.73, gla2x = 4.96,
+  goy1x = 4.25, goy2x = 7.725,
+  gr1x = 3.54, gr2x = 6.435,
+  hi1x = 3.47, hi2x = 6.3,
+  jac1x = 5.23, jac2x = 9.5,
+  jac21x = 3.64, jac22x = 6.62,
+  lio1x = 2.95, lio2x = 5.37,
+  mav1x = 3.44, mav2x = 6.25,
+  mir1x = 3.26, mir2x = 5.925,
+  mp51x = 3.89, mp52x = 7.07,
+  mp71x = 3.66, mp72x = 6.65,
+  nom1x = 2.38, nom2x = 4.335,
+  nok1x = 3.46, nok2x = 6.295,
+  ram1x = 4.05, ram2x = 7.365,
+  the1x = 3.15, the2x = 5.735,
+  yi1x = 3.39, yi2x = 6.17,
+  ze1x = 4.10, ze2x = 7.46,
+  zo1x = 4.70, zo2x = 8.55,
+  zo21x = 5.97, zo22x = 10.85,
+  mel1x = 2.12, mel2x = 3.85,
+  l81x = 1.76, l82x = 3.2,
+  fro1x = 2.31, fro2x = 4.2,
+  tho1x = 2.31, tho2x = 4.2,
+  roo1x = 3.89, roo2x = 7.07,
+  custom1x = 287.65, custom2x = 523,
+  se1x = 2.31, se2x = 4.2,
+  fr1x = 2.53, fr2x = 4.6,
+  cl1x = 1.21, cl2x = 2.2,
+  fl1x = 3.79, fl2x = 6.8935,
+}
+
+RcCustomStrength = 7.5
+RequireToggle = true
+ToggleKey = "ScrollLock"
+
+math.randomseed(GetRunningTime())
+EnablePrimaryMouseButtonEvents(true)
+
+local recoilAccumulator = 0
+local MaxXRecoil = 1
+
+RecoilGun = string.lower(RecoilGun)
+OutputLogMessage("[INFO] Selected weapon: %s\n", RecoilGun)
+
+-- Tarkista että recoil-arvot on määritelty
+local function IsGunValid()
+  if SingleRecoilGuns[RecoilGun] then
+    return RecoilTable[RecoilGun .. "2x"] ~= nil
+  else
+    return RecoilTable[RecoilGun .. "1x"] ~= nil and RecoilTable[RecoilGun .. "2x"] ~= nil
+  end
+end
+
+if not IsGunValid() then
+  OutputLogMessage("[ERROR] Recoil values NOT FOUND for weapon '%s'. Tarkista aseen nimi!\n", RecoilGun)
+  return
+end
+
+function GetDynamicRecoilStrength()
+  if SingleRecoilGuns[RecoilGun] then
+    local value = RecoilTable[RecoilGun .. "2x"]
+    OutputLogMessage("[INFO] Zoom: 1x/2x (yhtenäinen) | Recoil strength: %.3f\n", value)
+    return value
+  else
+    local suffix = IsKeyLockOn("CapsLock") and "2x" or "1x"
+    local key = RecoilGun .. suffix
+    local value = RecoilTable[key]
+    if value == nil then
+      OutputLogMessage("[ERROR] Recoil value NOT FOUND for '%s'. Tarkista aseen nimi!\n", key)
+      return 0
+    else
+      OutputLogMessage("[INFO] Current zoom: %s | Recoil strength: %.3f\n", suffix, value)
+      return value
+    end
+  end
+end
+
+function OnEvent(event, arg)
+  if RequireToggle then
+    if IsKeyLockOn(ToggleKey) then
+      if IsMouseButtonPressed(3) then
+        repeat
+          if IsMouseButtonPressed(1) then
+            repeat
+              local currentStrength = GetDynamicRecoilStrength()
+              recoilAccumulator = recoilAccumulator + currentStrength
+              local moveAmount = math.floor(recoilAccumulator)
+              recoilAccumulator = recoilAccumulator - moveAmount
+              if moveAmount ~= 0 then
+                local randomX = math.random(-MaxXRecoil, MaxXRecoil)
+                MoveMouseRelative(randomX, moveAmount)
+              end
+              Sleep(math.random(6, 10))
+            until not IsMouseButtonPressed(1)
+          end
+        until not IsMouseButtonPressed(3)
+      end
+    end
+  else
+    if IsMouseButtonPressed(3) then
+      repeat
+        if IsMouseButtonPressed(1) then
+          repeat
+            local currentStrength = GetDynamicRecoilStrength()
+            recoilAccumulator = recoilAccumulator + currentStrength
+            local moveAmount = math.floor(recoilAccumulator)
+            recoilAccumulator = recoilAccumulator - moveAmount
+            if moveAmount ~= 0 then
+              local randomX = math.random(-MaxXRecoil, MaxXRecoil)
+              MoveMouseRelative(randomX, moveAmount)
+            end
+            Sleep(math.random(6, 10))
+          until not IsMouseButtonPressed(1)
+        end
+      until not IsMouseButtonPressed(3)
+    end
+  end
+end
